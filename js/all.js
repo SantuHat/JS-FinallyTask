@@ -104,6 +104,11 @@ function getCartList() {
       const jsTotal = document.querySelector('.js-total');
       jsTotal.textContent = res.data.finalTotal;
       cartData = res.data.carts;
+      if (cartData.length === 0) {
+        cartList.innerHTML = `<tr><td></td>
+        <td>目前無任何品項</td></tr>`;
+        return;
+      }
       let str = '';
       cartData.forEach(function (item) {
         str += `<tr>
