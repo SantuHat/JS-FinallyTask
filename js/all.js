@@ -167,3 +167,88 @@ function deleteAllCardList(e) {
       alert('購物車已清空，請勿重複點擊');
     });
 }
+
+// 送出訂單
+const orderInfoBtn = document.querySelector('.orderInfo-btn');
+orderInfoBtn.addEventListener('click', function (e) {
+  e.preventDefault();
+  if (cartData.length === 0) {
+    alert('請加入購物車');
+    return;
+  }
+  const customerName = document.querySelector('#customerName').value;
+  const customerPhone = document.querySelector('#customerPhone').value;
+  const customerEmail = document.querySelector('#customerEmail').value;
+  const customerAddress = document.querySelector('#customerAddress').value;
+  const tradeWay = document.querySelector('#tradeWay').value;
+  if (
+    customerName == '' ||
+    customerPhone == '' ||
+    customerEmail == '' ||
+    customerAddress == '' ||
+    tradeWay == ''
+  ) {
+    alert('請填寫資料');
+    return;
+  }
+  axios
+    .post(
+      `https://livejs-api.hexschool.io/api/livejs/v1/customer/${api_path}/orders`,
+      {
+        data: {
+          user: {
+            name: customerName,
+            tel: customerPhone,
+            email: customerEmail,
+            address: customerAddress,
+            payment: tradeWay,
+          },
+        },
+      }
+    )
+    .then(function (res) {
+      alert('訂單建立成功');
+      document.querySelector('#customerName').value = '';
+      document.querySelector('#customerPhone').value = '';
+      document.querySelector('#customerEmail').value = '';
+      document.querySelector('#customerAddress').value = '';
+      document.querySelector('#tradeWay').value = 'ATM';
+      getCartList();
+    });
+});
+
+const customerEmail = document.querySelector('#customerEmail');
+customerEmail.addEventListener('blur', function (e) {
+  if (validateEmail(customerEmail.value) == false) {
+    document.querySelector(`[data-message="Email"]`).textContent =
+      '請填寫正確的Email格式';
+    return;
+  } else {
+    document.querySelector(`[data-message="Email"]`).textContent = '';
+  }
+});
+
+const customerPhone = document.querySelector('#customerPhone');
+customerPhone.addEventListener('blur', function (e) {
+  if (validatePhone(customerPhone.value) == false) {
+    document.querySelector(`[data-message="電話"]`).textContent =
+      '請填寫正確的電話格式';
+  } else {
+    document.querySelector(`[data-message="電話"]`).textContent = '';
+  }
+});
+
+// utility js
+function validateEmail(mail) {
+  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+    return true;
+  }
+  return false;
+}
+
+function validatePhone(phone) {
+  if (/^[09]{2}\d{8}$/.test(phone)) {
+    return true;
+  }
+  return false;
+}
