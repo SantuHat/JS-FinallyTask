@@ -22,6 +22,12 @@ function getOrderList() {
       // 組訂單字串
       let str = '';
       orderData.forEach(function (item) {
+        // 組時間字串
+        let time = new Date(item.createdAt * 1000);
+        let year = time.getFullYear();
+        let month = time.getMonth() + 1;
+        let day = time.getDate();
+        const orderTime = `${year}/${month}/${day}`;
         // 判斷訂單處理狀態
         let orderStatus = '';
         if (item.paid === true) {
@@ -47,7 +53,7 @@ function getOrderList() {
             <td>
               ${productStr}
             </td>
-            <td>${item.createdAt}</td>
+            <td>${orderTime}</td>
             <td>
               <a href="#" class="js-orderStatus" data-status="${item.paid}" data-id="${item.id}">${orderStatus}</a>
             </td>
