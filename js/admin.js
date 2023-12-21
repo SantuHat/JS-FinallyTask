@@ -13,7 +13,7 @@ function getOrderList() {
       `https://livejs-api.hexschool.io/api/livejs/v1/admin/${api_path}/orders`,
       {
         headers: {
-          Authorization: token,
+          "Authorization": token,
         },
       }
     )
@@ -48,11 +48,11 @@ function getOrderList() {
               ${productStr}
             </td>
             <td>${item.createdAt}</td>
-            <td class="orderStatus">
-              <a href="#">${orderStatus}</a>
+            <td>
+              <a href="#" class="js-orderStatus" data-status="${item.paid}" data-id="${item.id}">${orderStatus}</a>
             </td>
             <td>
-              <input type="button" class="delSingleOrder-Btn" data-id="${item.id}" value="刪除">
+              <input type="button" class="delSingleOrder-Btn js-orderDelete" data-id="${item.id}" value="刪除">
             </td>
         </tr>
         `;
@@ -64,15 +64,53 @@ function getOrderList() {
     });
 }
 
-// 刪除單筆訂單
 jsOrderList.addEventListener('click', function (e) {
   e.preventDefault();
-  let orderId = e.target.getAttribute('data-id');
-  if (orderId === null) {
+  const orderId = e.target.getAttribute('data-id');
+  const targetClass = e.target.getAttribute('class');
+
+  // 改變處理狀態
+  if (targetClass === 'js-orderStatus') {
+    let status = e.target.getAttribute('data-status');
+    changeOrderStatus(status, orderId);
     return;
   }
-  deleteOrderItem(orderId);
+  // 刪除單筆訂單
+  if (targetClass === 'delSingleOrder-Btn js-orderDelete') {
+    deleteOrderItem(orderId);
+    return;
+  }
 });
+
+function changeOrderStatus(status, id) {
+  let newStatus;
+  if (status === 'true') {
+    newStatus = false;
+  } else {
+    newStatus = true;
+  }
+  axios
+    .put(
+      `https://livejs-api.hexschool.io/api/livejs/v1/admin/${api_path}/orders`,
+      {
+        'data': {
+          'id': id,
+          'paid': newStatus,
+        },
+      },
+      {
+        headers: {
+          'Authorization': token,
+        },
+      }
+    )
+    .then(function (res) {
+      alert('修改訂單狀態成功');
+      getOrderList();
+    }).catch(function(error){
+      console.log(error);
+    })
+}
 
 function deleteOrderItem(id) {
   axios
@@ -80,7 +118,7 @@ function deleteOrderItem(id) {
       `https://livejs-api.hexschool.io/api/livejs/v1/admin/${api_path}/orders/${id}`,
       {
         headers: {
-          Authorization: token,
+          'Authorization': token,
         },
       }
     )
