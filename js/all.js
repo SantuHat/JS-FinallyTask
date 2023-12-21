@@ -170,6 +170,7 @@ function deleteAllCardList(e) {
 
 // 送出訂單
 const orderInfoBtn = document.querySelector('.orderInfo-btn');
+const orderInfoForm = document.querySelector('.orderInfo-form');
 orderInfoBtn.addEventListener('click', function (e) {
   e.preventDefault();
   if (cartData.length === 0) {
@@ -208,11 +209,7 @@ orderInfoBtn.addEventListener('click', function (e) {
     )
     .then(function (res) {
       alert('訂單建立成功');
-      document.querySelector('#customerName').value = '';
-      document.querySelector('#customerPhone').value = '';
-      document.querySelector('#customerEmail').value = '';
-      document.querySelector('#customerAddress').value = '';
-      document.querySelector('#tradeWay').value = 'ATM';
+      orderInfoForm.reset();
       getCartList();
     });
 });
